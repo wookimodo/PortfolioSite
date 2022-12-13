@@ -6,83 +6,134 @@
 {% endblock my_style %}
 
 {% block title %}
-    Blog 목록
+Blog 목록
 {% endblock title %}
 
 {% block main_area %}
 <!-- Page content-->
 <section class="container">
-  <h2>BLOG</h2>
-  <div class="row">
-      <!-- Blog entries-->
-      <div class="col-lg-8">
-          <!-- Featured blog post-->
-          {% for p in post_list %}
-          <div class="card mb-4">
-              <a href="#!"><img class="card-img-top" src="https://picsum.photos/seed/{{p.id}}/850/350" alt="..." /></a>
-              <div class="card-body">
-                  <div class="small text-muted">{{p.created_at}}</div>
-                  <h2 class="card-title">{{p.title}}</h2>
-                  <p class="card-text">{{p.content}}</p>
-                  <a class="btn btn-primary" href="{{p.get_absolute_url}}">Read more →</a>
-              </div>
-          </div>
-          {% endfor %}
-          <!-- Nested row for non-featured blog posts-->
-          <!-- Pagination-->
-          <nav aria-label="Pagination">
-              <hr class="my-0" />
-              <ul class="pagination justify-content-center my-4">
-                  <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Newer</a></li>
-                  <li class="page-item active" aria-current="page"><a class="page-link" href="#!">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#!">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#!">3</a></li>
-                  <li class="page-item disabled"><a class="page-link" href="#!">...</a></li>
-                  <li class="page-item"><a class="page-link" href="#!">15</a></li>
-                  <li class="page-item"><a class="page-link" href="#!">Older</a></li>
-              </ul>
-          </nav>
-      </div>
-      <!-- Side widgets-->
-      <div class="col-lg-4">
-          <!-- Search widget-->
-          <div class="card mb-4">
-              <div class="card-header">Search</div>
-              <div class="card-body">
-                  <div class="input-group">
-                      <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
-                      <button class="btn btn-primary" id="button-search" type="button">Go!</button>
-                  </div>
-              </div>
-          </div>
-          <!-- Categories widget-->
-          <div class="card mb-4">
-              <div class="card-header">Categories</div>
-              <div class="card-body">
-                  <div class="row">
-                      <div class="col-sm-6">
-                          <ul class="list-unstyled mb-0">
-                              <li><a href="#!">Web Design</a></li>
-                              <li><a href="#!">HTML</a></li>
-                              <li><a href="#!">Freebies</a></li>
-                          </ul>
-                      </div>
-                      <div class="col-sm-6">
-                          <ul class="list-unstyled mb-0">
-                              <li><a href="#!">JavaScript</a></li>
-                              <li><a href="#!">CSS</a></li>
-                              <li><a href="#!">Tutorials</a></li>
-                          </ul>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <!-- Side widget-->
-          <div class="card mb-4">
-              <div class="card-header">Side Widget</div>
-              <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use, and feature the Bootstrap 5 card component!</div>
-          </div>
-      </div>
-  </div>
+    <h2>BLOG</h2>
+
+    <div class="row">
+        <!-- Blog entries-->
+        <div class="col-lg-8">
+            <!-- Featured blog post-->
+            {% if post_list.exists %}
+            {% for p in post_list %}
+            <div class="card mb-4">
+                <a href="#!">
+                    {% if p.head_image %}
+                    <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image" />
+                    {% else %}
+                    <img class="card-img-top" src="https://picsum.photos/id/{{p.id}}/800/200" alt="random_image" />
+                    {% endif %}
+                </a>
+                <div class="card-body">
+                    <div class="small text-muted">{{p.created_at}}</div>
+                    <h2 class="card-title">{{p.title}}</h2>
+                    {% if p.hook_text %}
+                    <h5 class="text-muted">{{ p.hook_text }}</h5>
+                    {% endif %}
+                    <p class="card-text">{{ p.content | truncatewords:45 }}</p>
+                    <a class="btn btn-primary" href="{{p.get_absolute_url}}">Read more →</a>
+                </div>
+            </div>
+            {% endfor %}
+            <!-- Nested row for non-featured blog posts-->
+            <!-- Pagination-->
+            {% if is_paginated %}
+            <nav aria-label="Pagination">
+                <hr class="my-0" />
+                <ul class="pagination justify-content-center my-4">
+                    <!-- 이전 페이지로 돌아가기 -->
+                    {% if page_obj.has_previous %}
+                    <!-- 이전 페이지 객체가 있으면 [prev]버튼 활성화 -->
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'blog:post_list' %}?page={{ page_obj.previous_page_number }}"
+                            tabindex="-1">Prev</a>
+                    </li>
+                    {% else %}
+                    <!-- 이전페이지 객체가 없으면 [prev]버튼 비활성화 -->
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Prev</a>
+                    </li>
+                    {% endif %}
+                    <!-- 페이지를 번호로 출력하기 -->
+                    {% for page in page_obj.paginator.page_range %}
+                    <!-- 현재 선택한 페이지 번호는 비활성화 시킴 -->
+                    {% if page_obj.number == forloop.counter %}
+                    <li class="page-item disabled" aria-current="page">
+                        <a class="page-link" style="background-color: #ffc800; "
+                            href="{{ request.path }}?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                    </li>
+                    {% else %}
+                    <!-- 현재 선택한 페이지 번호는 활성화 시킴 -->
+                    <li class="page-item" aria-current="page">
+                        <a class="page-link" href="{{ request.path }}?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    <!-- 다음 페이지로 가기 -->
+                    {% if page_obj.has_next %}
+                    <!-- 이전페이지 객체가 있으면 [Next]버튼 활성화 -->
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{% url 'blog:post_list' %}?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            {% else %}
+            <h3>아직 게시물이 없습니다.</p>
+            {% endif %}
+        </div>
+        <!-- Side widgets-->
+        <div class="col-lg-4">
+            <!-- Search widget-->
+            <div class="card mb-4">
+                <div class="card-header">Search</div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input class="form-control" type="text" placeholder="Enter search term..."
+                            aria-label="Enter search term..." aria-describedby="button-search" />
+                        <button class="btn btn-primary" id="button-search" type="button">Go!</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Categories widget-->
+            <div class="card mb-4">
+                <div class="card-header">Categories</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="#!">Web Design</a></li>
+                                <li><a href="#!">HTML</a></li>
+                                <li><a href="#!">Freebies</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-6">
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="#!">JavaScript</a></li>
+                                <li><a href="#!">CSS</a></li>
+                                <li><a href="#!">Tutorials</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Side widget-->
+            <div class="card mb-4">
+                <div class="card-header">Side Widget</div>
+                <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use,
+                    and feature the Bootstrap 5 card component!</div>
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock main_area %}
