@@ -12,8 +12,11 @@ Blog 목록
 {% block main_area %}
 <!-- Page content-->
 <section class="container">
-    <h2>BLOG</h2>
-
+    <h2>BLOG 
+        {% if category %}
+        <span class="badge rounded-pill bg-success float-right">{{category}}</span>
+        {% endif %}
+    </h2>
     <div class="row">
         <!-- Blog entries-->
         <div class="col-lg-8">
@@ -23,13 +26,21 @@ Blog 목록
             <div class="card mb-4" id="post-{{p.pk}}">
                 <div class="card-body">
                     {% if p.category %}
-                    <span class="badge bg-secondary float-end">{{p.category}}</span>
+                    <span class="badge rounded-pill bg-success float-end">{{p.category}}</span>
                     {% else %}
-                    <span class="badge bg-secondary float-end">미분류</span>
+                    <span class="badge rounded-pill bg-success float-end">미분류</span>
                     {% endif %}
                     <h2 class="card-title">{{p.title}}</h2>
                     {% if p.hook_text %}
                     <h5 class="text-muted">{{ p.hook_text }}</h5>
+                    {% endif %}
+                    {% if p.tags.exists %}
+                    <i class="fas fa-tags"></i>
+                    {% for tag in p.tags.iterator %}
+                    <a href="{{ tag.get_absolute_url}}"><span class="badge bg-secondary">{{tag}}</span></a>
+                    {% endfor %}
+                    <br/>
+                    <br/>
                     {% endif %}
                     <div class="card-footer small text-muted">Posted on {{p.created_at}} by
                         <a href="#">{{p.author | upper}}</a>
