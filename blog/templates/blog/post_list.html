@@ -20,21 +20,24 @@ Blog 목록
             <!-- Featured blog post-->
             {% if post_list.exists %}
             {% for p in post_list %}
-            <div class="card mb-4">
-                <a href="#!">
+            <div class="card mb-4" id="post-{{p.pk}}">
+                <div class="card-body">
+                    {% if p.category %}
+                    <span class="badge bg-secondary float-end">{{p.category}}</span>
+                    {% else %}
+                    <span class="badge bg-secondary float-end">미분류</span>
+                    {% endif %}
+                    <h2 class="card-title">{{p.title}}</h2>
+                    {% if p.hook_text %}
+                    <h5 class="text-muted">{{ p.hook_text }}</h5>
+                    {% endif %}
+                    <div class="card-footer small text-muted">Posted on {{p.created_at}} by
+                        <a href="#">{{p.author | upper}}</a>
+                    </div>
                     {% if p.head_image %}
                     <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image" />
                     {% else %}
                     <img class="card-img-top" src="https://picsum.photos/id/{{p.id}}/800/200" alt="random_image" />
-                    {% endif %}
-                </a>
-                <div class="card-body">
-                    <div class="card-footer small text-muted">Posted on {{p.created_at}} by
-                        <a href="#">{{p.author | upper}}</a>
-                    </div>
-                    <h2 class="card-title">{{p.title}}</h2>
-                    {% if p.hook_text %}
-                    <h5 class="text-muted">{{ p.hook_text }}</h5>
                     {% endif %}
                     <p class="card-text">{{ p.content | truncatewords:45 }}</p>
                     <a class="btn btn-primary" href="{{p.get_absolute_url}}">Read more →</a>
@@ -95,47 +98,8 @@ Blog 목록
             {% endif %}
         </div>
         <!-- Side widgets-->
-        <div class="col-lg-4">
-            <!-- Search widget-->
-            <div class="card mb-4">
-                <div class="card-header">Search</div>
-                <div class="card-body">
-                    <div class="input-group">
-                        <input class="form-control" type="text" placeholder="Enter search term..."
-                            aria-label="Enter search term..." aria-describedby="button-search" />
-                        <button class="btn btn-primary" id="button-search" type="button">Go!</button>
-                    </div>
-                </div>
-            </div>
-            <!-- Categories widget-->
-            <div class="card mb-4">
-                <div class="card-header">Categories</div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <ul class="list-unstyled mb-0">
-                                <li><a href="#!">Web Design</a></li>
-                                <li><a href="#!">HTML</a></li>
-                                <li><a href="#!">Freebies</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-sm-6">
-                            <ul class="list-unstyled mb-0">
-                                <li><a href="#!">JavaScript</a></li>
-                                <li><a href="#!">CSS</a></li>
-                                <li><a href="#!">Tutorials</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Side widget-->
-            <div class="card mb-4">
-                <div class="card-header">Side Widget</div>
-                <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use,
-                    and feature the Bootstrap 5 card component!</div>
-            </div>
-        </div>
+        <!-- settings에서 templates를 찾아서 기본경로로 설정하도록 해놨기 때문에 -->
+        {% include 'blog/side_widgets.html' %}
     </div>
 </section>
 {% endblock main_area %}
