@@ -15,7 +15,7 @@ Create Post - Blog
   <h1>Create New Post</h1>
   <hr/>
       {% comment %} 파일도 같이 전송하겠다는 의미. {% endcomment %}
-      <form method="post" enctype="multiport/form-data">{% csrf_token %}
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
 
         {{ form | crispy }}
     

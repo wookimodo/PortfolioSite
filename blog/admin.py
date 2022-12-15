@@ -20,4 +20,5 @@ admin.site.register(Tag, TagAdmin)
 # admin site에 summernote 적용
 class PostAdmin(SummernoteModelAdmin):
     summernote_fields = '__all__'
+    
 admin.site.register(Post, PostAdmin)
