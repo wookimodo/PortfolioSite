@@ -38,7 +38,11 @@
                     <br/>
                     {% endif %}
                     <!-- Post meta content-->
-                    <div class="text-muted fst-italic mb-2">{{post.created_at}} by <a href="#">{{post.author | upper}}</a></div>
+                    <div class="text-muted fst-italic mb-2">{{post.created_at}} by <a href="#">{{post.author | upper}}</a>
+                    {% if user.is_authenticated and user == post.author %}
+                        <a class="btn btn-warning btn-sm float-end" href="/blog/update_post/{{post.pk}}/" role="button"><i class="fas fa-pen"></i> Edit Post</a>
+                    {% endif %}
+                    </div>
                 </header>
                 <!-- Preview image figure-->
                 <figure class="mb-4">
@@ -50,7 +54,7 @@
                 </figure>
                 <!-- Post content-->
                 <section class="mb-5">
-                    <p class="fs-5 mb-4">{{post.content}}</p>
+                    <p class="fs-5 mb-4">{{post.content | safe}}</p>
             </article>
             {% if post.file_upload %}
             <a href="{{ post.file_upload.url }}" class="btn btn-outline-dark" role="button" download>

@@ -12,14 +12,19 @@ Blog 목록
 {% block main_area %}
 <!-- Page content-->
 <section class="container">
-    <h2>BLOG 
+    <h1>  BLOG 
+        {% if user.is_authenticated %}
+            {% if user.is_superuser or user.is_staff %}
+                <a class="btn btn-warning btn-md float-end" href="/blog/create_post/" role="button"> <i class="fas fa-pen"></i>&nbsp;&nbsp;New Post</a>
+            {% endif %}
+        {% endif %}
         {% if category %}
         <span class="badge rounded-pill bg-success">{{category}}</span>
         {% endif %}
         {% if tag %}
         <span class="badge rounded-pill bg-secondary"><i class="fas fa-tags"></i> {{tag}}({{tag.post_set.count}})</span>
         {% endif %}
-    </h2>
+    </h1>
     <div class="row">
         <!-- Blog entries-->
         <div class="col-lg-8">
@@ -45,15 +50,13 @@ Blog 목록
                     <br/>
                     <br/>
                     {% endif %}
-                    <div class="card-footer small text-muted">Posted on {{p.created_at}} by
-                        <a href="#">{{p.author | upper}}</a>
-                    </div>
+                    <div class="card-footer small text-muted">Posted on {{p.created_at}} by<a href="#"> {{p.author | upper}}</a></div>
                     {% if p.head_image %}
                     <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image" />
                     {% else %}
                     <img class="card-img-top" src="https://picsum.photos/id/{{p.id}}/800/200" alt="random_image" />
                     {% endif %}
-                    <p class="card-text">{{ p.content | truncatewords:45 }}</p>
+                    <p class="card-text">{{ p.content | truncatewords:45 | safe}}</p>
                     <a class="btn btn-primary" href="{{p.get_absolute_url}}">Read more →</a>
                 </div>
             </div>

@@ -7,12 +7,12 @@
 {% endblock my_style %}
 
 {% block title %}
-Create Post - Blog
+Edit Post - Blog
 {% endblock title %}
 
 {% block main_area %}
 <section class="container">
-  <h1>Create New Post</h1>
+  <h1>Edit Post</h1>
   <hr/>
       {% comment %} 파일도 같이 전송하겠다는 의미. {% endcomment %}
       <form method="post" enctype="multiport/form-data">{% csrf_token %}
